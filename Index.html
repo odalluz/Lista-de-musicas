@@ -161,12 +161,12 @@
         }
 
         async function getSongs() {
-            const response = await fetch('http://127.0.0.1:3000/songs');
+            const response = await fetch('https://lista-de-musicas.vercel.app/songs');
             songs = await response.json();
         }
 
         async function addSong(song) {
-            const response = await fetch('http://127.0.0.1:3000/songs', {
+            const response = await fetch('https://lista-de-musicas.vercel.app/songs', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(song),
@@ -176,7 +176,7 @@
         }
 
         async function voteSong(songId) {
-            const response = await fetch(`http://127.0.0.1:3000/songs/${songId}/vote`, {
+            const response = await fetch(`https://lista-de-musicas.vercel.app/songs/${songId}/vote`, {
                 method: 'PUT',
             });
             const updatedSong = await response.json();
