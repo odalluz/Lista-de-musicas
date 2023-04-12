@@ -8,8 +8,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // Conecte-se ao MongoDB (substitua 'your_mongodb_connection_string' pela sua string de conexão)
-mongoose.connect('mongodb://localhost:27017/minha_lista_de_musicas', { useNewUrlParser: true, useUnifiedTopology: true });
-
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const songSchema = new mongoose.Schema({
   name: String,
@@ -38,4 +37,4 @@ app.put('/songs/:id/vote', async (req, res) => {
 });
 
 // Inicie o servidor na porta 3000
-app.listen(3000, () => console.log('Server listening on port 3000'));
+app.listen(process.env.PORT || 3000, () => console.log(`Server listening on port ${process.env.PORT || 3000}`));
