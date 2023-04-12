@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista de Músicas</title>
+    <meta charset="UTF-8">
+    <!-- ... estilos CSS ... -->
+    <style>
+              body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+      }
+  h1 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 30px;
+  }
+
+  form {
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  input[type="text"] {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 60%;
+    margin-bottom: 10px;
+  }
+
+  button {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #333;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  li {
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+    padding: 10px;
+  }
+
+  .vote {
+    display: flex;
+    align-items: center;
+  }
+
+  .vote button {
+    margin-left: 10px;
+  }
+
+  .vote span {
+    margin-right: 10px;
+    font-weight: bold;
+  }
+
+  .alert {
+    padding: 10px;
+    background-color: #f44336;
+    color: #fff;
+    border-radius: 5px;
+    margin-bottom: 10px;
+  }
+    </style>
+</head>
+<body>
+    <h1>Lista de Músicas</h1>
+    <form>
+        <label for="music">Digite o nome da música:</label>
+        <input type="text" id="music" name="music">
+        <button type="submit">Adicionar</button>
+    </form>
+    <div class="alert" id="alert" style="display: none;"></div>
+    <ul id="music-list">
+    </ul>
+    <script>
+        const form = document.querySelector('form');
+        const musicInput = document.getElementById('music');
+        const alert = document.getElementById('alert');
+        const musicList = document.getElementById('music-list');
+
+        let songs = [];
+
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const music = musicInput.value.trim();
+
+            if (!music) {
+                alert.style.display = 'block';
+                alert.textContent = 'Por favor, digite o nome de uma música.';
+                return;
+            }
+
+            const exists = songs.find(function (song) {
+                return song.name.toLowerCase() === music.toLowerCase();
+            });
+
+            if (exists) {
+                alert.style.display = 'block';
+                alert.textContent = 'Essa música já está na lista.';
+                return;
+            }
+
+            await addSong({ name: music, votes: 0 });
+            musicInput.value = '';
+            alert.style.display = 'none';
+
+            renderSongs();
+        });
+
+        async function renderSongs() {
+            await getSongs();
+
+            musicList.innerHTML = '';
+            songs.sort(function (a, b) {
+                return b.votes - a.votes;
+            });
+
+            songs.forEach(function (song) {
+                const li = document.createElement('li');
+                const name = document.createElement('span');
+                const vote = document.createElement('div');
+                const voteCount = document.createElement('span');
+                const voteButton = document.createElement('button');
+
+                name.textContent = song.name;
+                voteCount.textContent = song.votes;
+                voteButton.textContent = 'Votar';
+                voteButton.addEventListener('click', async function () {
+                    await voteSong(song.id);
+                });
+
+                vote.appendChild(voteCount);
+                vote.appendChild(voteButton);
+
+                li.appendChild(name);
+                li.appendChild(vote);
+
+                musicList.appendChild(li);
+            });
+        }
+
+        async function getSongs() {
+            const response = await fetch('https://lista-de-musicas.vercel.app/songs');
+            songs = await response.json();
+        }
+
+        async function addSong(song) {
+            const response = await fetch('https://lista-de-musicas.vercel.app/songs', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(song),
+            });
+            const addedSong = await response.json();
+            songs.push(addedSong);
+        }
+
+        async function voteSong(songId) {
+            const response = await fetch(`https://lista-de-musicas.vercel.app/songs/${songId}/vote`, {
+                method: 'PUT',
+            });
+            const updatedSong = await response.json();
+
+            const songIndex = songs.findIndex(song => song.id === songId);
+            if (songIndex > -1) {
+                songs[songIndex] = updatedSong;
+            }
+            renderSongs();
+        }
+
+        renderSongs();
+    </script>
+</body>
+</html>
