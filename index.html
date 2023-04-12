@@ -3,6 +3,7 @@
 <head>
     <title>Lista de Músicas</title>
     <meta charset="UTF-8">
+
     <!-- ... estilos CSS ... -->
     <style>
               body {
@@ -93,102 +94,116 @@
     <ul id="music-list">
     </ul>
     <script>
-        const form = document.querySelector('form');
-        const musicInput = document.getElementById('music');
-        const alert = document.getElementById('alert');
-        const musicList = document.getElementById('music-list');
+  const form = document.querySelector('form');
+  const musicInput = document.getElementById('music');
+  const alert = document.getElementById('alert');
+  const musicList = document.getElementById('music-list');
 
-        let songs = [];
+  let songs = [];
 
-        form.addEventListener('submit', async function (e) {
-            e.preventDefault();
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
 
-            const music = musicInput.value.trim();
+    const music = musicInput.value.trim();
 
-            if (!music) {
-                alert.style.display = 'block';
-                alert.textContent = 'Por favor, digite o nome de uma música.';
-                return;
-            }
+    if (!music) {
+      alert.style.display = 'block';
+      alert.textContent = 'Por favor, digite o nome de uma música.';
+      return;
+    }
 
-            const exists = songs.find(function (song) {
-                return song.name.toLowerCase() === music.toLowerCase();
-            });
+    const exists = songs.find(function(song) {
+      return song.name.toLowerCase() === music.toLowerCase();
+    });
 
-            if (exists) {
-                alert.style.display = 'block';
-                alert.textContent = 'Essa música já está na lista.';
-                return;
-            }
+    if (exists) {
+      alert.style.display = 'block';
+      alert.textContent = 'Essa música já está na lista.';
+      return;
+    }
 
-            await addSong({ name: music, votes: 0 });
-            musicInput.value = '';
-            alert.style.display = 'none';
+    await addSong({ name: music, votes: 0 });
+    musicInput.value = '';
+    alert.style.display = 'none';
 
-            renderSongs();
-        });
+    renderSongs();
+  });
 
-        async function renderSongs() {
-            await getSongs();
+  async function renderSongs() {
+    await getSongs();
 
-            musicList.innerHTML = '';
-            songs.sort(function (a, b) {
-                return b.votes - a.votes;
-            });
+    musicList.innerHTML = '';
+    songs.sort(function(a, b) {
+      return b.votes - a.votes;
+    });
 
-            songs.forEach(function (song) {
-                const li = document.createElement('li');
-                const name = document.createElement('span');
-                const vote = document.createElement('div');
-                const voteCount = document.createElement('span');
-                const voteButton = document.createElement('button');
+    songs.forEach(function(song, index) {
+      const li = document.createElement('li');
+      const name = document.createElement('span');
+      const vote = document.createElement('div');
+      const voteCount = document.createElement('span');
+      const voteButton = document.createElement('button');
 
-                name.textContent = song.name;
-                voteCount.textContent = song.votes;
-                voteButton.textContent = 'Votar';
-                voteButton.addEventListener('click', async function () {
-                    await voteSong(song.id);
-                });
+      name.textContent = song.name;
+      voteCount.textContent = song.votes;
+      voteButton.textContent = 'Votar';
+      voteButton.addEventListener('click', async function() {
+        await voteSong(song.id);
+      });
 
-                vote.appendChild(voteCount);
-                vote.appendChild(voteButton);
+      vote.appendChild(voteCount);
+      vote.appendChild(voteButton);
 
-                li.appendChild(name);
-                li.appendChild(vote);
+      li.appendChild(name);
+      li.appendChild(vote);
 
-                musicList.appendChild(li);
-            });
-        }
+      if (index < 3) {
+        li.style.backgroundColor = 'lightgreen';
+      }
 
-        async function getSongs() {
-            const response = await fetch('https://lista-de-musicas.vercel.app/songs');
-            songs = await response.json();
-        }
+      musicList.appendChild(li);
+    });
+  }
 
-        async function addSong(song) {
-            const response = await fetch('https://lista-de-musicas.vercel.app/songs', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(song),
-            });
-            const addedSong = await response.json();
-            songs.push(addedSong);
-        }
+    // ...
+  
+  async function getSongs() {
+    const response = await fetch('https://your-glitch-project-name.glitch.me/songs');
+    songs = await response.json();
+  }
 
-        async function voteSong(songId) {
-            const response = await fetch(`https://lista-de-musicas.vercel.app/songs/${songId}/vote`, {
-                method: 'PUT',
-            });
-            const updatedSong = await response.json();
+  async function addSong(song) {
+    const response = await fetch('https://your-glitch-project-name.glitch.me/songs', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: song.name,
+        votes: song.votes,
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+    });
+    const addedSong = await response.json();
+    songs.push(addedSong);
+  }
 
-            const songIndex = songs.findIndex(song => song.id === songId);
-            if (songIndex > -1) {
-                songs[songIndex] = updatedSong;
-            }
-            renderSongs();
-        }
+  async function voteSong(songId) {
+    const response = await fetch(`https://your-glitch-project-name.glitch.me/songs/${songId}/vote`, {
+      method: 'PUT',
+    });
+    const updatedSong = await response.json();
 
-        renderSongs();
+    const songIndex = songs.findIndex((song) => song.id === songId);
+    if (songIndex > -1) {
+      songs[songIndex] = updatedSong;
+    }
+    renderSongs();
+  }
+
+  renderSongs();
+
+  // ...
+
     </script>
 </body>
 </html>
