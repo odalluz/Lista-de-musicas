@@ -45,8 +45,7 @@ app.put('/songs/:id/vote', async (req, res) => {
 
 // Adicione essa linha para servir arquivos estáticos da pasta public
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(__dirname));
 
-// Inicie o servidor na porta do Glitch
-const listener = app.listen(process.env.PORT, () => {
-  console.log('Your app is listening on port ' + listener.address().port);
-});
+module.exports = app;
+
