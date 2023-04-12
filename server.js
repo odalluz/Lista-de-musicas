@@ -8,7 +8,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // Conecte-se ao MongoDB
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb+srv://thauanfelippepro:H21c2mKXbnJdemGV@cluster0.rq3bghy.mongodb.net/minha_lista_de_musicas?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true });
 
 const songSchema = new mongoose.Schema({
   name: String,
