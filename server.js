@@ -7,7 +7,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-// Conecte-se ao MongoDB (substitua 'your_mongodb_connection_string' pela sua string de conexão)
+// Conecte-se ao MongoDB
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const songSchema = new mongoose.Schema({
