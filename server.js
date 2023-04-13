@@ -10,10 +10,16 @@ app.use(bodyParser.json());
 
 // Atualize a configuração do CORS
 app.use(cors({
-  origin: '*', // Permite qualquer origem
-  methods: ['GET', 'POST', 'PUT'], // Permite métodos específicos
-  allowedHeaders: ['Content-Type'], // Permite headers específicos
+  origin: 'https://musicas-three.vercel.app',
+  methods: ['GET', 'POST', 'PUT'],
+  allowedHeaders: ['Content-Type'],
 }));
+
+// Define o cabeçalho Access-Control-Allow-Origin
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  next();
+});
 
 // Conecte-se ao MongoDB
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -50,4 +56,3 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(__dirname));
 
 module.exports = app;
-
