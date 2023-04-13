@@ -4,26 +4,18 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const path = require('path');
 
-
 const app = express();
 app.use(bodyParser.json());
 
 // Atualize a configuração do CORS
 app.use(cors({
-  origin: 'https://musicas-three.vercel.app',
-  methods: ['GET', 'POST', 'PUT'],
-  allowedHeaders: ['Content-Type'],
+  origin: 'https://musicas-three.vercel.app', // Permite apenas o seu site
+  methods: ['GET', 'POST', 'PUT'], // Permite métodos específicos
+  allowedHeaders: ['Content-Type'], // Permite headers específicos
 }));
-
-// Define o cabeçalho Access-Control-Allow-Origin
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  next();
-});
 
 // Conecte-se ao MongoDB
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
-
 
 const songSchema = new mongoose.Schema({
   name: String,
