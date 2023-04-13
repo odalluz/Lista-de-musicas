@@ -9,9 +9,9 @@ app.use(bodyParser.json());
 
 // Atualize a configuração do CORS
 app.use(cors({
-  origin: 'https://musicas-three.vercel.app', // Permite apenas o seu site
-  methods: ['GET', 'POST', 'PUT'], // Permite métodos específicos
-  allowedHeaders: ['Content-Type'], // Permite headers específicos
+  origin: 'https://musicas-three.vercel.app',
+  methods: ['GET', 'POST', 'PUT'],
+  allowedHeaders: ['Content-Type'],
 }));
 
 // Conecte-se ao MongoDB
@@ -26,21 +26,33 @@ const Song = mongoose.model('Song', songSchema);
 
 // Rotas
 app.get('/songs', async (req, res) => {
-  const songs = await Song.find();
-  res.json(songs);
+  try {
+    const songs = await Song.find();
+    res.json(songs);
+  } catch (error) {
+    res.status(500).send(error);
+  }
 });
 
 app.post('/songs', async (req, res) => {
-  const song = new Song(req.body);
-  await song.save();
-  res.json(song);
+  try {
+    const song = new Song(req.body);
+    await song.save();
+    res.json(song);
+  } catch (error) {
+    res.status(500).send(error);
+  }
 });
 
 app.put('/songs/:id/vote', async (req, res) => {
-  const song = await Song.findById(req.params.id);
-  song.votes += 1;
-  await song.save();
-  res.json(song);
+  try {
+    const song = await Song.findById(req.params.id);
+    song.votes += 1;
+    await song.save();
+    res.json(song);
+  } catch (error) {
+    res.status(500).send(error);
+  }
 });
 
 // Adicione essa linha para servir arquivos estáticos da pasta public
