@@ -168,14 +168,12 @@
     // ...
   
   async function getSongs() {
-    const response = await fetch('mongodb+srv://thauanfelippepro:H21c2mKXbnJdemGV@cluster0.rq3bghy.mongodb.net/?retryWrites=true&w=majority
-/songs');
+    const response = await fetch('mongodb+srv://thauanfelippepro:H21c2mKXbnJdemGV@cluster0.rq3bghy.mongodb.net/?retryWrites=true&w=majority/songs');
     songs = await response.json();
   }
 
   async function addSong(song) {
-    const response = await fetch('mongodb+srv://thauanfelippepro:H21c2mKXbnJdemGV@cluster0.rq3bghy.mongodb.net/?retryWrites=true&w=majority
-/songs', {
+    const response = await fetch('mongodb+srv://thauanfelippepro:H21c2mKXbnJdemGV@cluster0.rq3bghy.mongodb.net/?retryWrites=true&w=majority/songs', {
       method: 'POST',
       body: JSON.stringify({
         name: song.name,
@@ -190,8 +188,7 @@
   }
 
   async function voteSong(songId) {
-    const response = await fetch(`mongodb+srv://thauanfelippepro:H21c2mKXbnJdemGV@cluster0.rq3bghy.mongodb.net/?retryWrites=true&w=majority
-/songs/${songId}/vote`, {
+    const response = await fetch(`mongodb+srv://thauanfelippepro:H21c2mKXbnJdemGV@cluster0.rq3bghy.mongodb.net/?retryWrites=true&w=majority/songs/${songId}/vote`, {
       method: 'PUT',
     });
     const updatedSong = await response.json();
